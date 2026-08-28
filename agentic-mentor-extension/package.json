@@ -1,0 +1,46 @@
+{
+  "name": "vscode-assignment-mentor",
+  "displayName": "Assignment Mentor & Viva",
+  "description": "Guided research, specification generation, Socratic mentoring, and viva assessment.",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onView:assignmentMentorSidebar"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "assignment-mentor-container",
+          "title": "Assignment Mentor",
+          "icon": "$(mortar-board)"
+        }
+      ]
+    },
+    "views": {
+      "assignment-mentor-container": [
+        {
+          "type": "webview",
+          "id": "assignmentMentorSidebar",
+          "name": "Workflow Steps"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "echo 'No compilation step needed for plain JS'"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0"
+  },
+  "dependencies": {
+    "marked": "^18.0.9"
+  }
+}

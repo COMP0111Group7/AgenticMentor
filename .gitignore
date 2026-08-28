@@ -1,0 +1,28 @@
+# Node
+node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+
+# Runtime output
+chat_histories/
+viva_chat_histories/
+session_summary.md
+
+# Env / secrets
+.env
+.env.*
+*.pem
+*.key
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/

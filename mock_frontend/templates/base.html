@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentic Mentor{% block title_suffix %}{% endblock %}</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/dist/tabler-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg am-navbar">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand am-brand" href="{{ url_for('index') }}">
+      <i class="ti ti-brain"></i> Agentic Mentor
+    </a>
+    <div class="am-stepper d-none d-md-flex">
+      {% for phase in phases %}
+        {% set labels = {'upload': '1. Submission', 'build': '2. Prompting', 'submit': '3. Submit', 'viva': '4. Viva'} %}
+        {% set routes = {'upload': 'index', 'build': 'build', 'submit': 'submit', 'viva': 'viva'} %}
+        <a href="{{ url_for(routes[phase]) }}"
+           class="am-step {% if active_phase == phase %}active{% endif %} {% if phases.index(active_phase) > phases.index(phase) %}done{% endif %}">
+          {{ labels[phase] }}
+        </a>
+        {% if not loop.last %}<span class="am-step-sep"><i class="ti ti-chevron-right"></i></span>{% endif %}
+      {% endfor %}
+    </div>
+    <span class="am-user"><i class="ti ti-user-circle"></i> Demo student</span>
+  </div>
+</nav>
+
+<div class="am-layout">
+  {% block sidebar %}
+  <aside class="am-sidebar">
+    <div class="am-sidebar-empty">
+      <i class="ti ti-file-text"></i>
+      <p>The assignment matrix will appear here once a spec is uploaded.</p>
+    </div>
+  </aside>
+  {% endblock %}
+
+  <main class="am-main">
+    {% block content %}{% endblock %}
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

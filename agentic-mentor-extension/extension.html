@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VS Code Extension Sidebar Mockup</title>
+  <style>
+    :root {
+      --bg: var(--vscode-sideBar-background, #252526);
+      --panel-bg: var(--vscode-sideBar-background, #252526);
+      --border: var(--vscode-sideBar-border, #3c3c3c);
+      --accent: var(--vscode-button-background, #0e639c);
+      --accent-hover: var(--vscode-button-hoverBackground, #1177bb);
+      --text: var(--vscode-sideBar-foreground, #cccccc);
+      --text-muted: var(--vscode-descriptionForeground, #858585);
+      --card-bg: var(--vscode-editor-background, #1e1e1e);
+      --input-bg: var(--vscode-input-background, #3c3c3c);
+    }
+
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+    }
+
+    /* Fill the entire VS Code view area */
+    html, body {
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg);
+      color: var(--text);
+      font-size: 13px;
+      overflow: hidden;
+    }
+
+    .vscode-sidebar {
+      width: 100%;
+      height: 100%;
+      background: var(--panel-bg);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Navigation Tabs Header */
+    .tab-bar {
+      display: flex;
+      background: var(--vscode-editorGroupHeader-tabsBackground, #2d2d2d);
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      flex-shrink: 0;
+    }
+    
+    .tab {
+      padding: 8px 12px;
+      font-size: 11px;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-right: 1px solid var(--border);
+      white-space: nowrap;
+      user-select: none;
+    }
+    
+    .tab.active {
+      color: var(--vscode-tab-activeForeground, #ffffff);
+      background: var(--panel-bg);
+      border-bottom: 2px solid var(--accent);
+    }
+
+    /* Page Content Panels */
+    .page { 
+      display: none; 
+      padding: 12px; 
+      flex: 1; 
+      overflow-y: auto; 
+      flex-direction: column; 
+      gap: 12px; 
+    }
+    
+    .page.active { 
+      display: flex; 
+    }
+
+    /* Reusable UI Components */
+    h3 { 
+      font-size: 12px; 
+      font-weight: 600; 
+      text-transform: uppercase; 
+      letter-spacing: 0.5px; 
+      color: #ffffff; 
+      margin-bottom: 2px; 
+    }
+    
+    p { 
+      color: var(--text-muted); 
+      line-height: 1.4; 
+    }
+    
+    .btn {
+      background: var(--accent);
+      color: var(--vscode-button-foreground, #ffffff);
+      border: none;
+      padding: 7px 12px;
+      border-radius: 2px;
+      cursor: pointer;
+      font-size: 12px;
+      text-align: center;
+      width: 100%;
+    }
+    
+    .btn:hover { 
+      background: var(--accent-hover); 
+    }
+
+    .dropzone {
+      border: 2px dashed var(--border);
+      padding: 20px 12px;
+      text-align: center;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.02);
+      cursor: pointer;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 10px;
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .chat-box {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+      padding-right: 4px;
+      min-height: 120px;
+    }
+    
+    .msg { 
+      padding: 8px 10px; 
+      border-radius: 4px; 
+      max-width: 90%; 
+      font-size: 12px; 
+      line-height: 1.4; 
+    }
+    
+    .msg.agent { 
+      background: var(--card-bg); 
+      align-self: flex-start; 
+      border-left: 3px solid var(--accent); 
+    }
+    
+    .msg.user { 
+      background: #004b72; 
+      align-self: flex-end; 
+      color: #ffffff; 
+    }
+
+    /* Ensure list markers inside chat bubbles render inside the bubble and match text color */
+    .chat-box .msg ul,
+    .chat-box .msg ol {
+      margin: 0 0 0 0.85rem;
+      padding: 0;
+      list-style-position: inside;
+    }
+    .chat-box .msg li {
+      margin: 0.15rem 0;
+      color: inherit;
+    }
+    .chat-box .msg li::marker {
+      color: var(--text);
+    }
+
+    .input-row { 
+      display: flex; 
+      gap: 6px; 
+      margin-top: auto; 
+    }
+    
+    input[type="text"], textarea {
+      flex: 1;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 6px 8px;
+      border-radius: 2px;
+      font-size: 12px;
+    }
+    
+    textarea { 
+      resize: none; 
+      height: 70px; 
+    }
+
+    /* Make send button inside input-row compact and aligned */
+    .input-row .btn {
+      width: auto; /* override global 100% */
+      padding: 6px 12px;
+      height: 36px;
+      align-self: center;
+      min-width: 72px;
+    }
+
+    code { 
+      font-family: monospace; 
+      background: rgba(255,255,255,0.1); 
+      padding: 2px 4px; 
+      border-radius: 3px; 
+      color: #ce9178; 
+    }
+
+    /* Buffer Ring Spinner */
+    .buffer-ring {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-top-color: var(--vscode-button-foreground, #ffffff);
+      border-radius: 50%;
+      animation: buffer-spin 0.8s linear infinite;
+    }
+
+    @keyframes buffer-spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Container for spinner and text status */
+    .status-container {
+      display: none; /* hidden by default */
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="vscode-sidebar">
+    <!-- Header Tabs -->
+    <div class="tab-bar">
+      <div class="tab active" onclick="switchTab(0)">1. Welcome</div>
+      <div class="tab" onclick="switchTab(1)">2. Research</div>
+      <div class="tab" onclick="switchTab(2)">3. Ingestion</div>
+      <div class="tab" onclick="switchTab(3)">4. Mentoring</div>
+      <div class="tab" onclick="switchTab(4)">5. Viva</div>
+    </div>
+
+    <!-- Page 1: Landing -->
+    <div class="page active">
+      <h3>Assignment Setup</h3>
+      <p>Upload your assignment brief or rubric PDF to begin the automated setup.</p>
+      
+      <div class="dropzone" onclick="document.getElementById('fileInput').click()">
+        📂 Drop assignment brief here<br><span style="font-size: 10px; color: var(--text-muted);">(PDF, Markdown, or DOCX)</span>
+        <input type="file" id="fileInput" accept=".md, .pdf, .docx" style="display: none;">
+      </div>
+
+      <button class="btn" style="margin-top: auto;" onclick="switchTab(1)">Process & Continue →</button>
+    </div>
+
+    <!-- Page 2: Research -->
+    <div class="page">
+      <h3>Academic Research</h3>
+      <p>Gathering background papers and technical documentation.</p>
+      
+
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <label style="font-size:11px; color:var(--text-muted);">Model for this stage:</label>
+        <select id="researchModelSelect" style="background: var(--input-bg); color:#fff; border:1px solid var(--border); padding:6px 8px; border-radius:2px; font-size:12px;">
+          <option value="" disabled selected>Loading Models....</option>
+        </select>
+      </div>
+
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button class="btn" id="researchBtn" onclick="loadResearchContext()">🔍 Run Deep Research</button>
+      </div>
+
+      <!-- Buffer Ring Status Spinner -->
+      <div class="status-container" id="researchSpinner">
+        <div class="buffer-ring"></div>
+        <span>Running deep research...</span>
+      </div>
+
+      <div style="font-size: 11px; font-weight: bold; color: var(--text-muted); margin-top: 8px;">RETRIEVED REFERENCES</div>
+
+      <!-- Research context content -->
+      <div class="card" style="margin-top:10px; white-space:pre-wrap; font-family: monospace;" id="researchContent"></div>
+
+      <button class="btn" onclick="switchTab(2)" style="margin-top: auto;">Generate Specification →</button>
+    </div>
+
+    <!-- Page 3: Ingestion Agent -->
+    <div class="page">
+      <h3>Ingestion & Spec Builder</h3>
+      <p>Create Specification files using context</p>
+
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <label style="font-size:11px; color:var(--text-muted);">Model for this stage:</label>
+        <select id="ingestionModelSelect" style="background: var(--input-bg); color:#fff; border:1px solid var(--border); padding:6px 8px; border-radius:2px; font-size:12px;">
+          <option value="" disabled selected>Loading Models....</option>
+        </select>
+
+        <div style="display:flex; gap:8px; align-items:center;">
+          <button class="btn" id="specBtn" onclick="createSpecs()">▶ Create Specs</button>
+          <button class="btn" id="stopSpecBtn" style="width:auto; background:#7a1f1f;" onclick="stopIngestionSession()">■ Stop</button>
+        </div>
+
+        <div class="status-container" id="specSpinner">
+          <div class="buffer-ring"></div>
+          <span>Creating Specification files...</span>
+        </div>
+
+        <div class="card" style="margin-top:10px; min-height:160px; display:flex; flex-direction:column;" id="ingestionChatContainer">
+          <div class="chat-box" id="ingestionChat"></div>
+          <div class="input-row" style="margin-top:8px;">
+            <input type="text" id="clarifyInput" placeholder="Send clarification or answer..." />
+            <button class="btn" style="width:auto;" onclick="sendClarifyAnswer()">Send</button>
+          </div>
+        </div>
+
+        <button class="btn" onclick="switchTab(3)" style="margin-top: 8px;">Finalize Spec →</button>
+
+      </div>
+
+    </div>
+
+    <!-- Page 4: Mentoring Agent -->
+    <div class="page">
+      <h3>Mentoring Agent</h3>
+      <p>Interactive implementation session with mentoring.</p>
+
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <label style="font-size:11px; color:var(--text-muted);">Model for this stage:</label>
+        <select id="mentorModelSelect" style="background: var(--input-bg); color:#fff; border:1px solid var(--border); padding:6px 8px; border-radius:2px; font-size:12px;">
+          <option value="" disabled selected>Loading Models....</option>
+        </select>
+
+
+        <div style="display:flex; gap:8px; align-items:center;">
+          <button class="btn" id="startMentorBtn" onclick="startMentorSession()">▶ Start Mentoring</button>
+          <button class="btn" id="stopMentorBtn" style="width:auto; background:#7a1f1f;" onclick="stopMentorSession()">■ Stop</button>
+        </div>
+
+        <div class="status-container" id="mentorSpinner">
+          <div class="buffer-ring"></div>
+          <span>Mentor running...</span>
+        </div>
+
+        <div class="card" style="margin-top:10px; min-height:160px; display:flex; flex-direction:column;" id="mentorChatContainer">
+          <div class="chat-box" id="mentorChat"></div>
+          <div class="input-row" style="margin-top:8px;">
+            <input type="text" id="mentorInput" placeholder="Message to mentor (press Send)" />
+            <button class="btn" style="width:auto;" onclick="sendMentorMessage()">Send</button>
+          </div>
+        </div>
+
+         <button class="btn" onclick="switchTab(4)" style="margin-top: 8px;">Proceed to Viva →</button>
+
+
+      </div>
+
+    </div>
+
+    <!-- Page 5: Viva -->
+    <div class="page">
+      <h3>Viva</h3>
+      <p>Conduct viva according to generated specification and implementation.</p>
+
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <label style="font-size:11px; color:var(--text-muted);">Model for this stage:</label>
+        <select id="vivaModelSelect" style="background: var(--input-bg); color:#fff; border:1px solid var(--border); padding:6px 8px; border-radius:2px; font-size:12px;">
+          <option value="" disabled selected>Loading Models....</option>
+        </select>
+      
+        <div style="display:flex; gap:8px; align-items:center;">
+          <button class="btn" id="startVivaBtn" onclick="startVivaSession()">▶ Start Viva</button>
+        </div>
+
+        <div class="card" style="margin-top:10px; min-height:160px; display:flex; flex-direction:column;" id="vivaChatContainer">
+          <div class="chat-box" id="vivaChat"></div>
+          <div class="input-row" style="margin-top:8px;">
+            <input type="text" id="vivaInput" placeholder="Message to viva agent (press Send)" />
+            <button class="btn" style="width:auto;" onclick="sendVivaMessage()">Send</button>
+          </div>
+        </div>
+
+
+
+  </div>
+
+  <script>
+    const vscode = acquireVsCodeApi();
+
+    function notifyExtension(command, payload = {}) {
+      vscode.postMessage({ command, ...payload });
+    }
+
+    const fileInput = document.getElementById('fileInput');
+
+    fileInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const arrayBuffer = event.target.result;
+        const uint8Array = new Uint8Array(arrayBuffer);
+        
+        vscode.postMessage({
+          command: 'saveBriefFile',
+          fileName: file.name,
+          relativePath: `assignment_brief/spec.md`,
+          fileData: Array.from(uint8Array)
+        });
+      };
+
+      reader.readAsArrayBuffer(file);
+    });
+
+    function createSpecs(){
+      const chat = document.getElementById('ingestionChat');
+      const spinner = document.getElementById('specSpinner');
+      const button = document.getElementById('specBtn');
+
+      if (!chat) return;
+
+      chat.innerHTML = '';
+      chat._currentMsg = null;
+      if (spinner) spinner.style.display = 'flex'; // Show buffer ring
+      if (button) button.disabled = true;   
+
+      const modelSelect = document.getElementById('ingestionModelSelect');
+      const model = (modelSelect && modelSelect.value) || 'qwen3.6:27b';
+
+      vscode.postMessage({
+        command: 'createSpecs',
+        model: model
+      });
+    }
+
+    function stopIngestionSession() {
+      vscode.postMessage({ command: 'stopIngestion' });
+      const spinner = document.getElementById('specSpinner');
+      const startBtn = document.getElementById('specBtn');
+      if (spinner) spinner.style.display = 'none';
+      if (startBtn) startBtn.disabled = false;
+    }
+
+    // Ask extension host to load the file from your folder & show spinner
+    function loadResearchContext() {
+      const container = document.getElementById('researchContent');
+      const spinner = document.getElementById('researchSpinner');
+      const button = document.getElementById('researchBtn');
+
+      if (!container) return;
+
+      container.textContent = '';
+      if (spinner) spinner.style.display = 'flex'; // Show buffer ring
+      if (button) button.disabled = true;           // Disable button during process
+
+      const modelSelect = document.getElementById('researchModelSelect');
+      const model = (modelSelect && modelSelect.value) || 'qwen3.6:27b';
+      // Request the file path relative to workspace root
+      vscode.postMessage({
+        command: 'loadContext',
+        model: model
+      });
+    }
+
+    // Unified message handler: contextLoaded, contextError, appendIngestion
+    window.addEventListener('message', event => {
+      const message = event.data || {};
+      const container = document.getElementById('researchContent');
+      const specBox = document.getElementById('specBox');
+      const spinner = document.getElementById('researchSpinner');
+      const button = document.getElementById('researchBtn');
+
+      // Hide buffer ring and re-enable button when response arrives
+      if (spinner) spinner.style.display = 'none';
+      if (button) button.disabled = false;
+
+
+      switch (message.command) {
+        case 'contextLoaded': {
+          if (container) container.innerHTML = message.content || '';
+          break;
+        }
+        case 'contextError': {
+          if (container) container.innerHTML = '<div style="color:var(--text-muted)">Unable to load file: ' + escapeHtml(message.error || '') + '</div>';
+          break;
+        }
+        case 'appendIngestion': {
+          const chat = document.getElementById('ingestionChat');
+          if (chat) {
+            const text = message.chunk || '';
+            // If this is a new message (not streaming), create a new msg element
+            if (!chat._currentMsg) {
+              const node = document.createElement('div');
+              node.className = 'msg agent';
+              node.innerHTML = '';
+              chat.appendChild(node);
+              chat._currentMsg = node;
+            }
+            // Append text to current message
+            chat._currentMsg.innerHTML += text;
+            chat.scrollTop = chat.scrollHeight;
+          }
+          break;
+        }
+        case 'finishIngestion': {
+          const spinner2 = document.getElementById('specSpinner');
+          const button2 = document.getElementById('specBtn');
+          const chat = document.getElementById('ingestionChat');
+          if (spinner2) spinner2.style.display = 'none';
+          if (button2) button2.disabled = false;
+          if (chat) chat._currentMsg = null;
+          break;
+        }
+        case 'mentorOutput': {
+          // stream mentor stdout into chat box
+          const chat = document.getElementById('mentorChat');
+          if (!chat) break;
+          const text = message.chunk || '';
+          // append as agent message
+          const node = document.createElement('div');
+          node.className = 'msg agent';
+          node.innerHTML = text;
+          chat.appendChild(node);
+          chat.scrollTop = chat.scrollHeight;
+          break;
+        }
+        case 'mentorFinished': {
+          const spinner = document.getElementById('mentorSpinner');
+          const startBtn = document.getElementById('startMentorBtn');
+          if (spinner) spinner.style.display = 'none';
+          if (startBtn) startBtn.disabled = false;
+          // append a system message
+          const chat = document.getElementById('mentorChat');
+          if (chat) {
+            const node = document.createElement('div');
+            node.className = 'msg agent';
+            node.innerText = 'Mentor process finished.';
+            chat.appendChild(node);
+            chat.scrollTop = chat.scrollHeight;
+          }
+          break;
+        }
+        case 'vivaOutput': {
+          // stream viva stdout into chat box
+          const chat = document.getElementById('vivaChat');
+          if (!chat) break;
+          const text = message.chunk || '';
+          // append as agent message
+          const node = document.createElement('div');
+          node.className = 'msg agent';
+          node.innerHTML = text;
+          chat.appendChild(node);
+          chat.scrollTop = chat.scrollHeight;
+          break;
+        }
+        case 'vivaFinished': {
+          // append a system message
+          const chat = document.getElementById('vivaChat');
+          if (chat) {
+            const node = document.createElement('div');
+            node.className = 'msg agent';
+            node.innerText = 'Viva process finished.';
+            chat.appendChild(node);
+            chat.scrollTop = chat.scrollHeight;
+          }
+          break;
+        }
+      }
+    });
+
+    function sendClarifyAnswer() {
+      const input = document.getElementById('clarifyInput');
+      if (!input) return;
+      const answer = input.value || '';
+      if (!answer.trim()) return;
+      
+      // Add user message to chat
+      const chat = document.getElementById('ingestionChat');
+      if (chat) {
+        const node = document.createElement('div');
+        node.className = 'msg user';
+        node.innerText = answer;
+        chat.appendChild(node);
+        chat.scrollTop = chat.scrollHeight;
+        chat._currentMsg = null;
+      }
+      
+      // send answer to extension host which forwards it to ingestion.py stdin
+      vscode.postMessage({ command: 'clarifyAnswer', answer:answer });
+      // clear input
+      input.value = '';
+    }
+
+    // --- Mentoring UI helpers ---
+    function startMentorSession() {
+      const model = (document.getElementById('mentorModelSelect') && document.getElementById('mentorModelSelect').value) || 'qwen3.6:27b';
+      // const feature = (document.getElementById('mentorFeatureInput') && document.getElementById('mentorFeatureInput').value) || '';
+      const sessionId = (document.getElementById('mentorSessionInput') && document.getElementById('mentorSessionInput').value) || 'default_session';
+      const spinner = document.getElementById('mentorSpinner');
+      const startBtn = document.getElementById('startMentorBtn');
+      if (spinner) spinner.style.display = 'flex';
+      if (startBtn) startBtn.disabled = true;
+      // clear chat
+      const chat = document.getElementById('mentorChat');
+      if (chat) chat.innerHTML = '';
+      vscode.postMessage({ command: 'startMentor', model: model,  sessionId: sessionId });
+    }
+
+    function stopMentorSession() {
+      vscode.postMessage({ command: 'stopMentor' });
+      const spinner = document.getElementById('mentorSpinner');
+      const startBtn = document.getElementById('startMentorBtn');
+      if (spinner) spinner.style.display = 'none';
+      if (startBtn) startBtn.disabled = false;
+    }
+
+    function sendMentorMessage() {
+      const input = document.getElementById('mentorInput');
+      const chat = document.getElementById('mentorChat');
+      if (!input || !input.value.trim()) return;
+      const text = input.value.trim();
+      // add user message to chat
+      if (chat) {
+        const node = document.createElement('div');
+        node.className = 'msg user';
+        node.innerText = text;
+        chat.appendChild(node);
+        chat.scrollTop = chat.scrollHeight;
+      }
+      vscode.postMessage({ command: 'mentorInput', text: text });
+      input.value = '';
+    }
+
+    function startVivaSession() {
+      const model = (document.getElementById('vivaModelSelect') && document.getElementById('vivaModelSelect').value) || 'qwen3.6:27b';
+      // console.log('welcome to viva');
+
+      // console.log('model:', model);
+      const chat = document.getElementById('vivaChat');
+      if (chat) chat.innerHTML = '';
+      vscode.postMessage({ command: 'startViva', model: model});
+      return;
+    }
+
+    function sendVivaMessage() {
+      const input = document.getElementById('vivaInput');
+      const chat = document.getElementById('vivaChat');
+      if (!input || !input.value.trim()) return;
+      const text = input.value.trim();
+      // add user message to chat
+      if (chat) {
+        const node = document.createElement('div');
+        node.className = 'msg user';
+        node.innerText = text;
+        chat.appendChild(node);
+        chat.scrollTop = chat.scrollHeight;
+      }
+      vscode.postMessage({ command: 'vivaInput', text: text });
+      input.value = '';
+    }
+
+    async function loadModels() {
+    const researchModelSelect = document.getElementById('researchModelSelect');
+    const ingestionModelSelect = document.getElementById('ingestionModelSelect');
+    const mentorModelSelect = document.getElementById('mentorModelSelect');
+    const vivaModelSelect = document.getElementById('vivaModelSelect');
+    
+    try {
+      const res = await fetch('http://localhost:18434/api/tags');
+      const models = await res.json();
+      const modelNames = models.models.map(m => m.name);
+      
+      researchModelSelect.innerHTML = models.models.map(m => 
+        `<option value="${m.name}">${m.name}</option>`
+      ).join('');
+      
+      ingestionModelSelect.innerHTML = models.models.map(m => 
+        `<option value="${m.name}">${m.name}</option>`
+      ).join('');
+
+      mentorModelSelect.innerHTML = models.models.map(m => 
+        `<option value="${m.name}">${m.name}</option>`
+      ).join('');
+
+      vivaModelSelect.innerHTML = models.models.map(m => 
+        `<option value="${m.name}">${m.name}</option>`
+      ).join('');
+
+    } catch (err) {
+      researchModelSelect.innerHTML = '<option value="">Failed to load models</option>';
+      ingestionModelSelect.innerHTML = '<option value="">Failed to load models</option>';
+      mentorModelSelect.innerHTML = '<option value="">Failed to load models</option>';
+      vivaModelSelect.innerHTML = '<option value="">Failed to load models</option>';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', loadModels);
+
+    function switchTab(index) {
+      const tabs = document.querySelectorAll('.tab');
+      const pages = document.querySelectorAll('.page');
+
+      tabs.forEach((t, i) => t.classList.toggle('active', i === index));
+      pages.forEach((p, i) => p.classList.toggle('active', i === index));
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title_suffix %} — Submit codebase{% endblock %}
+
+{% block sidebar %}
+<aside class="am-sidebar">
+  <p class="am-sidebar-heading">Must-haves</p>
+  <ul class="am-checklist">
+    {% for item in rubric.must_haves %}
+    <li class="am-check-item status-{{ item.status }}">
+      <i class="ti {{ 'ti-circle-check' if item.status == 'met' else 'ti-alert-triangle' if item.status == 'flagged' else 'ti-circle-dashed' }}"></i>
+      <span>{{ item.text }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+
+  <p class="am-sidebar-heading">Learning objectives</p>
+  <ul class="am-objective-list">
+    {% for obj in rubric.learning_objectives %}
+    <li class="am-objective-item">
+      <div class="am-objective-top">
+        <span>{{ obj.text }}</span>
+        <span class="am-weight-badge">{{ obj.weight }}%</span>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  <div class="am-sidebar-references">
+    <p class="am-sidebar-heading">Agent references</p>
+    <ul class="am-sidebar-references-list">
+      {% for ref in references %}
+      <li class="am-sidebar-reference-item">
+        <a href="{{ ref.url }}" target="_blank" rel="noopener noreferrer" title="{{ ref.title }}">
+          <span class="am-sidebar-reference-title">{{ ref.title }}</span>
+          <span class="am-sidebar-reference-source">{{ ref.source }}</span>
+          <i class="ti ti-external-link"></i>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</aside>
+{% endblock %}
+
+{% block content %}
+<div class="am-submit-wrap">
+  <div class="am-submit-header">
+    <h1>Submit your codebase</h1>
+    <p class="text-muted">
+      Upload your completed codebase and any documentation. This will be
+      reviewed against the must-haves and learning objectives before the viva.
+    </p>
+  </div>
+
+  <div class="am-submit-sections">
+    <div class="am-submit-section">
+      <h2 class="am-submit-section-title"><i class="ti ti-code"></i> Codebase</h2>
+      <p class="text-muted">Upload your source code as a ZIP archive</p>
+      
+      <div id="codebaseDropzone" class="am-dropzone am-dropzone-secondary">
+        <i class="ti ti-package"></i>
+        <p class="am-dropzone-title">Drag and drop your ZIP here</p>
+        <p class="am-dropzone-sub">or</p>
+        <label class="btn am-btn-outline" for="codebaseInput">Browse files</label>
+        <input type="file" id="codebaseInput" accept=".zip" hidden>
+        <p class="am-dropzone-hint">ZIP · max 50MB</p>
+        <p id="codebaseFileName" class="am-filename d-none"></p>
+      </div>
+    </div>
+
+    <div class="am-submit-section">
+      <h2 class="am-submit-section-title"><i class="ti ti-file-text"></i> Documentation</h2>
+      <p class="text-muted">Optional: Upload a README or report (PDF, DOCX, or TXT)</p>
+      
+      <div id="docsDropzone" class="am-dropzone am-dropzone-secondary">
+        <i class="ti ti-file-upload"></i>
+        <p class="am-dropzone-title">Drag and drop your file here</p>
+        <p class="am-dropzone-sub">or</p>
+        <label class="btn am-btn-outline" for="docsInput">Browse files</label>
+        <input type="file" id="docsInput" accept=".pdf,.docx,.txt" hidden>
+        <p class="am-dropzone-hint">PDF, DOCX or TXT · max 10MB</p>
+        <p id="docsFileName" class="am-filename d-none"></p>
+      </div>
+    </div>
+
+    <div class="am-submit-section">
+      <h2 class="am-submit-section-title"><i class="ti ti-notes"></i> Notes</h2>
+      <p class="text-muted">Add any additional notes about your implementation</p>
+      
+      <textarea 
+        id="submissionNotes" 
+        class="am-textarea" 
+        rows="5" 
+        placeholder="E.g., known limitations, design decisions, setup instructions..."></textarea>
+    </div>
+  </div>
+
+  <div id="reviewingCard" class="am-reviewing d-none">
+    <div class="spinner-border am-spinner" role="status"></div>
+    <div>
+      <p class="mb-1 fw-medium">Review Agent is scanning your submission…</p>
+      <p class="text-muted small mb-0">Checking against must-haves and learning objectives</p>
+    </div>
+  </div>
+
+  <div class="am-phase-actions">
+    <button id="submitBtn" class="btn am-btn-primary" disabled>
+      <i class="ti ti-upload"></i> Submit for review
+    </button>
+    <a href="{{ url_for('build') }}" class="btn am-btn-outline">
+      <i class="ti ti-arrow-left"></i> Back to prompting
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/submit.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title_suffix %} — Submit assignment{% endblock %}
+
+{% block content %}
+<div class="am-upload-wrap">
+  <div class="am-upload-intro">
+    <h1>Submit your assignment spec</h1>
+    <p class="text-muted">
+      Upload the assignment description. The Ingestion Agent will read it and
+      build a matrix of must-have requirements and learning objectives to
+      guide the rest of the process.
+    </p>
+  </div>
+
+  <div id="dropzone" class="am-dropzone">
+    <i class="ti ti-cloud-upload"></i>
+    <p class="am-dropzone-title">Drag and drop your file here</p>
+    <p class="am-dropzone-sub">or</p>
+    <label class="btn am-btn-primary" for="fileInput">Browse files</label>
+    <input type="file" id="fileInput" accept=".pdf,.docx,.txt,.md" hidden>
+    <p class="am-dropzone-hint">PDF, DOCX or TXT · max 10MB</p>
+    <p id="fileName" class="am-filename d-none"></p>
+  </div>
+
+  <div id="analyzingCard" class="am-analyzing d-none">
+    <div class="spinner-border am-spinner" role="status"></div>
+    <div>
+      <p class="mb-1 fw-medium">Ingestion Agent is reading your spec…</p>
+      <p class="text-muted small mb-0">Extracting must-haves and learning objectives</p>
+    </div>
+  </div>
+
+  <button id="continueBtn" class="btn am-btn-primary am-continue-btn d-none">
+    Continue to prompting <i class="ti ti-arrow-right"></i>
+  </button>
+
+  <div id="referencesCard" class="am-references-card d-none">
+    <div class="am-references-header">
+      <h3><i class="ti ti-link"></i> References from Web Search</h3>
+      <p class="text-muted small mb-0">Sources used by the agent during document ingestion</p>
+    </div>
+    <div id="referencesList" class="am-references-list">
+      <!-- References will be populated here -->
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/upload.js') }}"></script>
+{% endblock %}
