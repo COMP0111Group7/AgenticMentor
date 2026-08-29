@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentic-mentor"
+version = "0.1.0"
+description = "Multi-agent pipeline that turns an assignment spec into research, tasks, a guided build, and a viva."
+requires-python = ">=3.10"
+dependencies = [
+    "agent-framework",
+    "feedparser",
+    "pydantic",
+]
+
+[project.scripts]
+agentic-mentor = "orchestration:cli"
+
+[tool.setuptools]
+py-modules = ["orchestration", "model_config", "ingestion_agent"]
+packages = ["research"]
