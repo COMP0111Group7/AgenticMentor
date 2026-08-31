@@ -19,5 +19,5 @@ All other settings (model, Ollama host, GitHub MCP URL, arxiv script path) live 
 Run the orchestrator
 
 ```code
-python orchestration.py
+python orchestration.py <path-to-specification-file>
 ```

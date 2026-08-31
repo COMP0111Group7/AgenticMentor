@@ -1,3 +1,2 @@
 agent-framework
 feedparser
-github_mcp
